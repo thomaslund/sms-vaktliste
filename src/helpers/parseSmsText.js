@@ -86,7 +86,7 @@ const parseShiftHours = (shifts, lastDate, updateCurrentDate) => {
       parseInt(shift.substring(3, shift.length - 1).trim(), 10)
     );
     return {
-      date: moment(date.utc(true)),
+      date: moment(date.format()),
       type: shiftType,
       ...shiftTypes[shiftType]
     };

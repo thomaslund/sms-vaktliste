@@ -84,13 +84,21 @@ const Location = styled.h4`
   margin-top: 0;
 `;
 
+const ErrorMessage = styled.div`
+  padding: 1em;
+  margin: 0.5em 0;
+  background-color: crimson;
+  color: white;
+`;
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       rawSmsText: '',
       parsedSmsText: null,
-      downloadLink: null
+      downloadLink: null,
+      error: null
     };
   }
 
@@ -107,13 +115,18 @@ class App extends Component {
         }
       );
     } catch (e) {
-      console.error('invalid input', e);
+      console.error(e);
+      const err = new Error(
+        'Klarte ikke tolke SMS tekst, kopier tekst på nytt fra SMS eller bestikk utvikleren'
+      );
+      this.setState({ error: err });
     }
   };
 
   handleType = e => {
     this.setState({
-      rawSmsText: e.target.value
+      rawSmsText: e.target.value,
+      error: null
     });
   };
 
@@ -137,6 +150,10 @@ class App extends Component {
       })
       .catch(e => {
         console.error(e);
+        const err = new Error(
+          'Server klarer ikke å generere kalenderfil, bestikk utvikleren for å fikse'
+        );
+        this.setState({ error: err });
       });
   };
 
@@ -155,6 +172,9 @@ class App extends Component {
           <Button disabled={!Boolean(this.state.rawSmsText)} type="submit">
             Konverter SMS
           </Button>
+          {this.state.error && (
+            <ErrorMessage>{this.state.error.message}</ErrorMessage>
+          )}
         </Form>
         <ShiftWrapper>
           <p>
