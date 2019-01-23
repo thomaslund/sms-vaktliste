@@ -111,7 +111,7 @@ export const parseSMS = sms => {
   moment()
     .locale('nb', localization)
     .format('LLL');
-  const startDate = parseStartDate(sms); // gets year and start date to calculate year wrapping
+  const startDate = parseStartDate(sms); // gets year and start date to calculate date/year wrapping
   const shifts = parseShifts(sms, startDate);
   return shifts;
 };

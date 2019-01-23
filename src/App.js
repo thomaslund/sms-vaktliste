@@ -1,7 +1,7 @@
 import './App.css';
 
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import parseSMS from './helpers/parseSmsText';
 import createDownloadIcsLink, { createIcsData } from './helpers/createIcs';
 
@@ -14,6 +14,16 @@ const AppWrapper = styled.div`
 const Title = styled.h1`
   text-align: center;
   padding: 0 20px;
+  font-size: 18px;
+`;
+
+const successAnimation = keyframes`
+  0 % {
+    background-color: mediumaquamarine;
+  }
+  100% {
+    background-color: lightgreen;
+  }
 `;
 
 const Button = styled.button`
@@ -29,6 +39,12 @@ const Button = styled.button`
     background: transparent;
     border: 2px dashed gainsboro;
   }
+
+  ${({ parseSuccess }) =>
+    parseSuccess &&
+    css`
+      animation: ${successAnimation} 1500ms alternate-reverse infinite;
+    `};
 `;
 
 const DownloadLink = styled.a`
@@ -48,19 +64,27 @@ const DownloadLink = styled.a`
 const Form = styled.form`
   width: 100%;
   padding: 0 2em 2em 2em;
+`;
 
-  textarea {
-    width: 100%;
-    height: 30vh;
-    max-height: 400px;
-    font-size: 12px;
-    border: 1px solid gray;
-    margin-bottom: 1em;
-  }
+const TextArea = styled.textarea`
+  width: 100%;
+  height: 30vh;
+  max-height: 400px;
+  font-size: 12px;
+  border: 1px solid gray;
+  margin-bottom: 1em;
+  transition: height 200ms ease;
+
+  ${({ parseSuccess }) =>
+    parseSuccess &&
+    css`
+      height: 10vh;
+      background-color: whitesmoke;
+    `};
 `;
 
 const ShiftWrapper = styled.div`
-  padding: 2em;
+  padding: 0 2em 2em;
 
   ul {
     max-width: 450px;
@@ -102,6 +126,14 @@ class App extends Component {
     };
   }
 
+  handleReset = () => {
+    this.setState({
+      parsedSmsText: null,
+      downloadLink: null,
+      error: null
+    });
+  };
+
   handleSubmit = e => {
     e.preventDefault();
     try {
@@ -124,9 +156,9 @@ class App extends Component {
   };
 
   handleType = e => {
+    if (this.state.parsedSmsText || this.state.error) this.handleReset();
     this.setState({
-      rawSmsText: e.target.value,
-      error: null
+      rawSmsText: e.target.value
     });
   };
 
@@ -159,18 +191,24 @@ class App extends Component {
 
   render() {
     const weeks = this.state.parsedSmsText;
+    const parseSuccess = Boolean(this.state.parsedSmsText);
     return (
       <AppWrapper className="App">
         <Title>Lag kalender av vaktliste-SMS</Title>
         <Form onSubmit={this.handleSubmit}>
           <label htmlFor="sms">Lim inn SMS:</label>
-          <textarea
+          <TextArea
             id="sms"
             value={this.state.rawSmsText}
             onChange={this.handleType}
+            parseSuccess={parseSuccess}
           />
-          <Button disabled={!Boolean(this.state.rawSmsText)} type="submit">
-            Konverter SMS
+          <Button
+            parseSuccess={parseSuccess}
+            disabled={!Boolean(this.state.rawSmsText)}
+            type="submit"
+          >
+            {parseSuccess ? 'Knall i padden!' : 'Konverter SMS'}
           </Button>
           {this.state.error && (
             <ErrorMessage>{this.state.error.message}</ErrorMessage>
