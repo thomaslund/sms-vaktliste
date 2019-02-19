@@ -34,6 +34,14 @@ const shiftTypes = {
       minutes: 30
     }
   },
+  D51: {
+    start: '10:30',
+    end: '15:00',
+    duration: {
+      hours: 4,
+      minutes: 30
+    }
+  },
   DPFAG: {
     start: '07:00',
     end: '16:00',
