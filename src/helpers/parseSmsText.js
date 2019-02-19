@@ -10,6 +10,14 @@ const shiftTypes = {
       minutes: 30
     }
   },
+  AX: {
+    start: '14:30',
+    end: '22:00',
+    duration: {
+      hours: 7,
+      minutes: 30
+    }
+  },
   D: {
     start: '07:00',
     end: '15:00',
@@ -24,6 +32,14 @@ const shiftTypes = {
     duration: {
       hours: 10,
       minutes: 30
+    }
+  },
+  DPFAG: {
+    start: '07:00',
+    end: '16:00',
+    duration: {
+      hours: 9,
+      minutes: 0
     }
   }
 };
@@ -58,7 +74,7 @@ const parseShifts = (sms, startDate) => {
   });
 
   const r2 = new RegExp(
-    /\b((man|tir|ons|tor|fre|lør|søn))\b ?\d{1,2} ?[A,D,N]/g
+    /\b((man|tir|ons|tor|fre|lør|søn))\b ?\d{1,2} ?\w{1,5}/g
   );
 
   let currentDate = startDate;
@@ -80,7 +96,7 @@ const parseShifts = (sms, startDate) => {
 
 const parseShiftHours = (shifts, lastDate, updateCurrentDate) => {
   const mappedShifts = shifts.map(shift => {
-    const shiftType = shift.slice(shift.length - 1);
+    const shiftType = shift.match(/\w{1,5}$/g);
     const date = addDate(
       lastDate,
       parseInt(shift.substring(3, shift.length - 1).trim(), 10)
