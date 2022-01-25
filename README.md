@@ -1,4 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+Disclaimer: This is not a maintained repo. This is a quick and dirty hack for parsing SMS text with work shifts into calendar entries for my wife.
+
+
 
 ## Available Scripts
 
